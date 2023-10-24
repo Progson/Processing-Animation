@@ -1,26 +1,40 @@
+import ddf.minim.*;
+import ddf.minim.ugens.*;
 
-String theTitle = "Every collision +5%";
+boolean play=true;
 
+Minim minim;
+AudioSample pop;
+AudioInput in;
+AudioRecorder recorder;
 
 Figure jeden;
 PVector canvasTopLeft;
 PVector canvasSize;
+String theTitle = "Every collision +5%";
+
 void setup() {
   size( 600, 800);
   frameRate(60);
   background(255);
   textAlign(CENTER);
-  
+
   drawCanvas();
   drawTheTitle();
+
+  minim = new Minim(this);
+  pop = minim.loadSample("../sounds/pop-2.mp3", 512);
+  recorder = minim.createRecorder(pop, "../exports/"+sketchname+"A.wav");
+
+
   jeden = new Figure(
-    new PVector(2, 2),
-    new PVector(30, 30),
-    new PVector(0, 0),
-    new PVector(canvasTopLeft.x+canvasSize.x/2, canvasTopLeft.y+canvasSize.y/2),
+    new PVector(30, 30), 
+    new PVector(30, 30), 
+    new PVector(0, 0), 
+    new PVector(canvasTopLeft.x+canvasSize.x/2, canvasTopLeft.y+canvasSize.y/2), 
     color(255, 0, 0));
 }
-void drawTheTitle(){
+void drawTheTitle() {
   textSize(40);
   fill(0);
   text(theTitle, canvasTopLeft.x+canvasSize.x/2, canvasTopLeft.y-20);
@@ -58,13 +72,24 @@ void collisionDetection() {
   }
 }
 void specialOnCollision() {
-  jeden.velocity.mult(1.05);
-  
-  jeden.fillment =color(random(1,300),random(1,300),random(1,300));
+  jeden.velocity.mult(1.02);
+  pop.trigger();
+  jeden.fillment =color(random(1, 300), random(1, 300), random(1, 300));
 }
 
 void draw () {
-  jeden.update();
-  collisionDetection();
-  jeden.display();
+  if (!play) {
+    stopRec();
+    recorder.endRecord();
+    recorder.save().close(); 
+    exit();
+  } else {
+    if (!recorder.isRecording()) {
+      recorder.beginRecord();
+    }
+    jeden.update();
+    collisionDetection();
+    jeden.display();
+    rec();
+  }
 }
