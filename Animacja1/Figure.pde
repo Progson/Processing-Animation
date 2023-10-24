@@ -36,10 +36,10 @@ class Figure {
     move();
   }
   private boolean checkIfOut() {
-    if (jeden.pos.x+jeden.size.x+jeden.velocity.x > canvasTopLeft.x+canvasSize.x) return false;
-    if (jeden.pos.x+jeden.velocity.x < canvasTopLeft.x)return false;
-    if (jeden.pos.y+jeden.size.y+jeden.velocity.y > canvasTopLeft.y+canvasSize.y) return false;
-    if (jeden.pos.y+jeden.velocity.y < canvasTopLeft.y)return false;
+    if (jeden.pos.x+jeden.size.x > canvasTopLeft.x+canvasSize.x) return false;
+    if (jeden.pos.x < canvasTopLeft.x)return false;
+    if (jeden.pos.y+jeden.size.y > canvasTopLeft.y+canvasSize.y) return false;
+    if (jeden.pos.y < canvasTopLeft.y)return false;
 
     return true;
   }

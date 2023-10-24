@@ -6,7 +6,7 @@ import sys
 # main
 title = ""
 try:
-    title = sys.argv[1].replace(sys.argv[0],"",1)
+    title = sys.argv[1].replace(sys.argv[1],"",1)
 except:
     title = input("you need to give a name of the sketch: -")
 
