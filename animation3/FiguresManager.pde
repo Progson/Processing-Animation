@@ -31,8 +31,8 @@ class FiguresManager {
           PVector tempVel = figures.get(i).velocity;
           figures.get(i).velocity =  figures.get(j).velocity ;
           figures.get(j).velocity =  tempVel;
-          specialOnCollision(figures.get(i));
-          specialOnCollision(figures.get(j));
+          //specialOnCollision(figures.get(i));
+          //specialOnCollision(figures.get(j));
         }
       }
     }
@@ -65,7 +65,7 @@ class FiguresManager {
     }
   }
   void specialOnCollision(Figure jeden) {
-    jeden.velocity.mult(1.02);
+    jeden.size.mult(1.02);
     pop.trigger();
     jeden.changeColor();
   }

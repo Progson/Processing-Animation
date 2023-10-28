@@ -47,7 +47,7 @@ class Figure {
     }
     int numberOfSteps = int(abs(velocity.x)/velocityStep.x);
     for (int i = 1; i <= numberOfSteps; i++) {
-      if (checkIfOut()) return;
+      //if (checkIfOut()) return;
       display();
       PVector temp = new PVector(dir.x*velocityStep.x, dir.y*velocityStep.y);
       pos.add(temp);
