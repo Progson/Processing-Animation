@@ -14,7 +14,7 @@ FiguresManager man;
 PVector canvasTopLeft;
 PVector canvasSize;
 String theTitle = "Every collision +2% bigger";
-String signature = "@progson";
+String signature = "@progson2";
 
 void setup() {
   size( 600, 800);
@@ -31,19 +31,19 @@ void setup() {
 
   man = new FiguresManager();
   man.addFigure(
-    new PVector(9, -9), 
+    new PVector(3, -3), 
     new PVector(30, 30), 
     new PVector(0, 0), 
     new PVector(canvasTopLeft.x+canvasSize.x/2, canvasSize.y/4), 
-    color(#0DF502),
-    color(#0F39FF));
-  /*man.addFigure(
-  new PVector(-3, 3),
-  new PVector(30, 30),
-  new PVector(0, 0),
-  new PVector(canvasTopLeft.x+canvasSize.x/2,canvasTopLeft.y+3*canvasSize.y/4),
-  color(#FEFF00),
-  color(#FF0004));*/
+    color(#FF1AD9), 
+    color(#0502EA));
+  man.addFigure(
+    new PVector(-3, 3), 
+    new PVector(30, 30), 
+    new PVector(0, 0), 
+    new PVector(canvasTopLeft.x+canvasSize.x/2, canvasTopLeft.y+3*canvasSize.y/4), 
+    color(#17F5FF), 
+    color(#FAD608));
 }
 void draw () {
   if (!play) {
@@ -60,8 +60,8 @@ void draw () {
     rec();
   }
 }
-void keyReleased(){ 
-  if(key == 's'){
+void keyReleased() { 
+  if (key == 's') {
     play = false;
   }
 }
