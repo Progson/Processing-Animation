@@ -2,7 +2,7 @@ class Displayable {
   PVector leftTopCorner, rightBottomCorner, size;
   color currentColor, color1, color2;
   float colorChange = 0.01;
-  float colorIncrementation = 0.05;
+  float colorIncrementation = 0.1;
   Displayable(PVector size) {
     this.size = size;
     leftTopCorner = new PVector(0, 0);
@@ -20,6 +20,9 @@ class Displayable {
     fill(currentColor);
     stroke(0);
     rect(offset.x+leftTopCorner.x, offset.y+leftTopCorner.y, size.x, size.y);
+  }
+   void display() {
+    display(new PVector(0,0));
   }
   void updateRightBottomCorner() {
     rightBottomCorner = PVector.add(leftTopCorner, size);

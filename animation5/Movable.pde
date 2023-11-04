@@ -25,6 +25,9 @@ class Movable extends Displayable {
     direction.x = cos(radians(angle));
     direction.y = sin(radians(angle));
   }
+   void calculateAngle() {
+    angle = degrees(atan2(direction.y, direction.x));
+  }
   void calculateVelocityNumberOfSteps(){
     velocityNumberOfSteps = int(velocity/velocityStep);
   }
