@@ -1,5 +1,11 @@
 class FiguresManager {
-  ArrayList<RectFigure> figures;
+  ArrayList<Figure> figures;
+  boolean biggerOnCollision = false;
+  float biggerOnCollisionPercent = 2;
+  boolean fasterOnCollision = false;
+  float fasterOnCollisionPercent = 2;
+  boolean changeColorOnCollision = false;
+  boolean playAudioOnCollision = true;
   FiguresManager() {
     figures = new ArrayList();
   }
@@ -10,7 +16,7 @@ class FiguresManager {
     color color1, 
     color color2)
   {
-    figures.add(new RectFigure(leftTopCorner, size, angle, velocity, velocityStep, color1, color2));
+    figures.add(new Figure(leftTopCorner, size, angle, velocity, velocityStep, color1, color2));
   }
   void manage() {
     for (int i = 0; i<figures.size(); i++) {
@@ -18,110 +24,118 @@ class FiguresManager {
       for (int step = 1; step <= numberOfSteps; step++) {
         figures.get(i).moveByStep();
         figures.get(i).updateHitbox();
-        figures.get(i).display(pg.leftTopCorner);
+        if (checkIfOut(figures.get(i)))
+          figures.get(i).display(playgroundOffset);
       }
       figures.get(i).move(figures.get(i).velocity-figures.get(i).velocityStep*numberOfSteps);
       figures.get(i).updateHitbox();
-      figures.get(i).display(playgroundOffset);
+      if (checkIfOut(figures.get(i)))
+        figures.get(i).display(playgroundOffset);
     }
   }
-  void collision(RectFigure figure, Hitbox other) {
-    // Sprawdź kolizję z górą
-    if (figure.hitbox.rightBottomCorner.y >= other.leftTopCorner.y &&
-      figure.hitbox.leftTopCorner.y <= other.leftTopCorner.y &&
-      figure.hitbox.rightBottomCorner.x >= other.leftTopCorner.x &&
-      figure.hitbox.leftTopCorner.x <= other.rightBottomCorner.x) {
-
-      figure.direction.y = -abs(figure.direction.y) ;
-      figure.calculateAngle();
-      figure.changeColor();
-      return;      
-    }
-    // Sprawdź kolizję z góra
-    if (figure.hitbox.leftTopCorner.y <= other.rightBottomCorner.y && 
-      figure.hitbox.rightBottomCorner.y >= other.rightBottomCorner.y &&
-      figure.hitbox.rightBottomCorner.x >= other.leftTopCorner.x &&
-      figure.hitbox.leftTopCorner.x <= other.rightBottomCorner.x) {
-      
-      figure.direction.y = abs(figure.direction.y) ;
-      figure.calculateAngle();
-      figure.changeColor();
-      return;  
-    }
-
-    // Sprawdź kolizję z lewą stroną
-    if (figure.hitbox.rightBottomCorner.x >= other.leftTopCorner.x &&
-      figure.hitbox.leftTopCorner.x <= other.leftTopCorner.x &&
-      figure.hitbox.rightBottomCorner.y >= other.leftTopCorner.y &&
-      figure.hitbox.leftTopCorner.y <= other.rightBottomCorner.y) {
-
-      figure.direction.x = -abs(figure.direction.x) ;
-      figure.calculateAngle();
-      figure.changeColor();
-      return;  
-    }
-
-    // Sprawdź kolizję z prawą stroną
-    if (figure.hitbox.leftTopCorner.x <= other.rightBottomCorner.x &&
-      figure.hitbox.rightBottomCorner.x >= other.rightBottomCorner.x &&
-      figure.hitbox.rightBottomCorner.y >= other.leftTopCorner.y &&
-      figure.hitbox.leftTopCorner.y <= other.rightBottomCorner.y) {
-
-      figure.direction.x = abs(figure.direction.x) ;
-      figure.calculateAngle();
-      figure.changeColor();
-      return;  
-    }
-    
-  }
-
-  void collision() {
+  void collisions() {
     for (int i = 0; i< figures.size(); i++) {
+      if (bounceOnPlayground(figures.get(i)))
+        specialActOnCollision(figures.get(i));
       for (int j = 0; j< figures.size(); j++) {
         if (i==j) continue;
-        collision(figures.get(i), figures.get(j).hitbox);
+        if (bounce(figures.get(i), figures.get(j).hitbox)) {
+          specialActOnCollision(figures.get(i));
+        }
       }
     }
   }
-  void collisionWithPlayground(){
-    for (int i = 0; i< figures.size(); i++) {
-        collision(figures.get(i), pg.top);
-        collision(figures.get(i), pg.bottom);
-        collision(figures.get(i), pg.left);
-        collision(figures.get(i), pg.right);
-    }
+  boolean bounceOnPlayground(Figure figure) {
+    return bounce(figure, pg.top) ||
+      bounce(figure, pg.bottom) ||
+      bounce(figure, pg.left) ||
+      bounce(figure, pg.right);
   }
-  void collisionWithWalls() {
-    for (int i = 0; i< figures.size(); i++) {
-      if (pg.leftTopCorner.x + figures.get(i).hitbox.leftTopCorner.x < pg.hitbox.leftTopCorner.x) {
-        figures.get(i).direction.x =  abs(figures.get(i).direction.x) ;
-        figures.get(i).calculateAngle();
-        figures.get(i).changeColor();
-        //figures.get(i).angle = 540 - figures.get(i).angle;
-        //figures.get(i).calculateDireciton();
-      }
-      if (pg.leftTopCorner.x + figures.get(i).hitbox.rightBottomCorner.x > pg.hitbox.rightBottomCorner.x) {
+  boolean bounce(Figure figure, Hitbox hitbox) {
+    if (figure.checkCollisionWithBottom(hitbox)) {
+      figure.direction.y = -abs(figure.direction.y) ;
+      figure.calculateAngle();
+      return true;
+    }
+    if (figure.checkCollisionWithTop(hitbox)) {
+      figure.direction.y = abs(figure.direction.y) ;
+      figure.calculateAngle();
+      return true;
+    }
+    if (figure.checkCollisionWithLeft(hitbox)) {
+      figure.direction.x = abs(figure.direction.x) ;
+      figure.calculateAngle();
+      return true;
+    }
+    if (figure.checkCollisionWithRight(hitbox)) {
+      figure.direction.x = -abs(figure.direction.x) ;
+      figure.calculateAngle();
+      return true;
+    }
+    return false;
+  }
+  void specialActOnCollision(Figure figure) {
+    if (playAudioOnCollision) {
+      pop.trigger();
+    }
 
-        figures.get(i).direction.x =  -abs(figures.get(i).direction.x) ;
-        figures.get(i).calculateAngle();
-        figures.get(i).changeColor();
-        //figures.get(i).angle = 540 - figures.get(i).angle;
-        //figures.get(i).calculateDireciton();
-      }
-      if (pg.leftTopCorner.y + figures.get(i).hitbox.leftTopCorner.y < pg.hitbox.leftTopCorner.y) {
-        figures.get(i).direction.y = abs(figures.get(i).direction.y) ;
-        figures.get(i).calculateAngle();
-        figures.get(i).changeColor();
-        //figures.get(i).angle = 360 - figures.get(i).angle;
-        //figures.get(i).calculateDireciton();
-      }
-      if (pg.leftTopCorner.y + figures.get(i).hitbox.rightBottomCorner.y > pg.hitbox.rightBottomCorner.y) {
-        figures.get(i).direction.y = -abs(figures.get(i).direction.y) ;
-        figures.get(i).calculateAngle();
-        figures.get(i).changeColor();
-        // figures.get(i).angle = 360 - figures.get(i).angle;
-        //figures.get(i).calculateDireciton();
-      }
+    if (changeColorOnCollision)
+      figure.changeColor();
+    if (fasterOnCollision) {
+      figure.velocity *= 1+fasterOnCollisionPercent*0.01;
+      figure.calculateVelocityNumberOfSteps();
     }
+    if (biggerOnCollision) {
+      figure.size.mult(1+biggerOnCollisionPercent*0.01);
+      figure.calculateRightBottomCorner();
+    }
+  }
+  void biggerOnCollisionBy(float percent) {
+    for (int i = 0; i< figures.size(); i++) {
+      biggerOnCollision = true;
+      biggerOnCollisionPercent = percent;
+    }
+  }
+  void notBiggerOnCollision() {
+    for (int i = 0; i< figures.size(); i++) {
+      biggerOnCollision = false;
+    }
+  }
+  void fasterOnCollisionBy(float percent) {
+    for (int i = 0; i< figures.size(); i++) {
+      fasterOnCollision = true;
+      fasterOnCollisionPercent = percent;
+    }
+  }
+  void notFasterOnCollision() {
+    for (int i = 0; i< figures.size(); i++) {
+      fasterOnCollision = false;
+    }
+  }
+  void changeColorOnCollision() {
+    for (int i = 0; i< figures.size(); i++) {
+      changeColorOnCollision = true;
+    }
+  }
+  void notChangeColorOnCollision() {
+    for (int i = 0; i< figures.size(); i++) {
+      changeColorOnCollision = false;
+    }
+  }
+  void playAudioOnCollision() {
+    for (int i = 0; i< figures.size(); i++) {
+      playAudioOnCollision = true;
+    }
+  }
+  void notplayAudioOnCollision() {
+    for (int i = 0; i< figures.size(); i++) {
+      playAudioOnCollision = false;
+    }
+  }
+  boolean checkIfOut(Figure figure) {
+    return!((figure.leftTopCorner.x < pg.leftTopCorner.x-10)||
+      (figure.rightBottomCorner.x > pg.rightBottomCorner.x+10) ||
+      (figure.leftTopCorner.y < pg.leftTopCorner.y-10)||
+      (figure.rightBottomCorner.y > pg.rightBottomCorner.y+10));
   }
 };

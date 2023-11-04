@@ -6,7 +6,7 @@ class Displayable {
   Displayable(PVector size) {
     this.size = size;
     leftTopCorner = new PVector(0, 0);
-    updateRightBottomCorner();
+    calculateRightBottomCorner();
     color1 = color(#FFFFFF);
     color2 = color(#030303);
     currentColor = color1;
@@ -14,17 +14,17 @@ class Displayable {
   Displayable(PVector LeftTopCorner, PVector size) {
     this.size = size;
     this.leftTopCorner = LeftTopCorner;
-    updateRightBottomCorner();
+    calculateRightBottomCorner();
   }
   void display(PVector offset) {
     fill(currentColor);
-    stroke(0);
+    noStroke();
     rect(offset.x+leftTopCorner.x, offset.y+leftTopCorner.y, size.x, size.y);
   }
    void display() {
     display(new PVector(0,0));
   }
-  void updateRightBottomCorner() {
+  void calculateRightBottomCorner() {
     rightBottomCorner = PVector.add(leftTopCorner, size);
   }
   void changeColor() {

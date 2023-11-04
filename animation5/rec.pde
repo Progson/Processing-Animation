@@ -8,7 +8,7 @@ void rec() {
   if (frameCount == 1 )
   {
     videoExport = new VideoExport(this, "../exports/"+sketchname+"V.mp4");
-    videoExport.setFrameRate(60);
+    videoExport.setFrameRate(recordingFrameRate);
     videoExport.startMovie();
   }  
   videoExport.saveFrame();
