@@ -1,6 +1,6 @@
-color backgroundColor = color(130);
+color backgroundColor = color(114,137,218);
 
-String title = "3 OF THEM!";
+String title = "10 OF THEM!";
 PFont titleFont;
 PVector titleLeftTopCorner;
 PVector titleCenterPosition;
@@ -14,7 +14,7 @@ PVector signatureLeftTopCorner;
 PVector signatureCenterPosition;
 PVector signatureSize;
 float signatureTextSize;
-color signatureColor = color(100);
+color signatureColor = color(30,33,36);
 void drawSurrounding() {
   if (frameCount == 1) { 
     titleFont = createFont("Calibri-Bold-48.vlw", 48);
@@ -50,14 +50,14 @@ void drawBackground() {
 }
 void drawTitle() {
   textFont(titleFont);
-  textSize(50);
+  textSize(70);
   fill(titleColor);
   textAlign(CENTER,BOTTOM);
   text(title, titleCenterPosition.x, playgroundOffset.y);
 }
 void drawSignature() {
   textFont(signatureFont);
-  textSize(30);
+  textSize(50);
   fill(signatureColor);
   textAlign(CENTER,TOP);
   text(signature, signatureCenterPosition.x, signatureCenterPosition.y);

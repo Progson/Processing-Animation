@@ -1,5 +1,6 @@
 class Figure extends Movable {
   Hitbox hitbox;
+  boolean inCollision = false;
   Figure(PVector leftTopCorner, 
     PVector size, 
     float angle, float velocity, float velocityStep, 
@@ -10,6 +11,7 @@ class Figure extends Movable {
     this.color2 = color2;
     currentColor = color1;
     hitbox = new Hitbox(leftTopCorner, size);
+    inCollision = false;
   }
   void updateHitbox() {
     hitbox.leftTopCorner = leftTopCorner;
